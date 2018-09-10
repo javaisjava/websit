@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<!-- saved from url=(0042)http://www.bugcode.cn/mlweatherpart03.html -->
+<html lang="cn" class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        <title>使用机器学习预测天气(第三部分神经网络)</title>
+        
+        <meta name="baidu-site-verification" content="CaV233YBWR">
+<meta name="tags" content="使用机器学习预测天气(第三部分神经网络)">
+<meta name="date" content="2018-01-10T00:00:00+08:00">
+<meta name="category" content="机器学习">
+<meta name="authors" content="笨熊">
+<meta name="summary" content="[&lt;Tag u&#39;Python&#39;&gt;, &lt;Tag u&#39;\u673a\u5668\u5b66\u4e60&#39;&gt;, &lt;Tag u&#39;\u5929\u6c14\u9884\u6d4b&#39;&gt;]">
+
+
+        <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+        <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1">
+
+        <link rel="stylesheet" type="text/css" href="./使用机器学习预测天气(第三部分神经网络)_files/gumby.css">
+        <link rel="stylesheet" type="text/css" href="./使用机器学习预测天气(第三部分神经网络)_files/style.css">
+        <link rel="stylesheet" type="text/css" href="./使用机器学习预测天气(第三部分神经网络)_files/pygment.css">
+        <script type="text/javascript" async="" src="./使用机器学习预测天气(第三部分神经网络)_files/analytics.js.download"></script><script src="./使用机器学习预测天气(第三部分神经网络)_files/push.js.download"></script><script src="./使用机器学习预测天气(第三部分神经网络)_files/f(5).txt"></script><script src="./使用机器学习预测天气(第三部分神经网络)_files/ca-pub-1732630384020496.js.download"></script><script async="" src="./使用机器学习预测天气(第三部分神经网络)_files/analytics.js(1).download"></script><script async="" src="./使用机器学习预测天气(第三部分神经网络)_files/f(6).txt"></script>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-1732630384020496",
+            enable_page_level_ads: true
+          });
+        </script>
+
+        <script src="./使用机器学习预测天气(第三部分神经网络)_files/modernizr-2.6.2.min.js.download"></script>
+
+
+              <script>
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+                ga('create', 'UA-71880797-1', 'bugcode');
+                ga('send', 'pageview');
+
+              </script>
+
+
+<script type="text/javascript" async="" src="./使用机器学习预测天气(第三部分神经网络)_files/embed.js.download"></script><script async="" type="text/javascript" src="./使用机器学习预测天气(第三部分神经网络)_files/count.js.download"></script><link rel="preload" href="./使用机器学习预测天气(第三部分神经网络)_files/f(7).txt" as="script"><script type="text/javascript" src="./使用机器学习预测天气(第三部分神经网络)_files/f(7).txt"></script><link rel="preload" href="./使用机器学习预测天气(第三部分神经网络)_files/f(8).txt" as="script"><script type="text/javascript" src="./使用机器学习预测天气(第三部分神经网络)_files/f(8).txt"></script><link rel="preload" as="style" href="https://c.disquscdn.com/next/embed/styles/lounge.18d379cad07465ce7a6b8f0d4799ef44.css"><link rel="preload" as="script" href="https://c.disquscdn.com/next/embed/common.bundle.e9b4803ecd9f11a1b0b249822211345c.js"><link rel="preload" as="script" href="https://c.disquscdn.com/next/embed/lounge.bundle.77f1c6b9b94d2ef16b4a55aa4fc401a5.js"><link rel="preload" as="script" href="https://disqus.com/next/config.js"><script src="./使用机器学习预测天气(第三部分神经网络)_files/alfalfa.4a5fcca1fe50a757044dfd331b660625.js.download" async="" charset="UTF-8"></script></head>
+
+<body id="index" class="home">
+
+
+    <div class="container">
+
+        <div class="row">
+
+          <header id="banner" class="body">
+                  <h1><a href="http://www.bugcode.cn/">捕蛇者说 <strong></strong></a></h1>
+          </header><!-- /#banner -->
+
+            <div id="navigation" class="navbar row">
+              <a href="http://www.bugcode.cn/mlweatherpart03.html#" gumby-trigger="#navigation &gt; ul" class="toggle"><i class="icon-menu"></i></a>
+             
+              <ul class="columns">
+                <li><a href="http://www.bugcode.cn/">Home</a></li>
+
+                <li><a href="http://www.bugcode.cn/pages/%E4%BA%86%E8%A7%A3%E6%88%91.html">关于我</a></li>
+
+              </ul>
+            </div>
+
+<section id="content" class="body">
+
+   <div class="row">
+        <div class="eleven columns">
+
+
+            <header>
+              <h2 class="entry-title">
+                <a href="http://www.bugcode.cn/mlweatherpart03.html" rel="bookmark" title="Permalink to 使用机器学习预测天气(第三部分神经网络)">使用机器学习预测天气(第三部分神经网络)</a></h2>
+           
+            </header>
+            <footer class="post-info">
+              <abbr class="published" title="2018-01-10T00:00:00+08:00">
+                Wed 10 January 2018
+              </abbr>
+              <address class="vcard author">By 
+                <a class="url fn" href="http://www.bugcode.cn/author/ben-xiong.html"> 笨熊</a>
+              </address>
+            </footer><!-- /.post-info -->
+            <div class="entry-content">
+              <h3>概述</h3>
+<p>  这是使用机器学习预测平均气温系列文章的最后一篇文章了，作为最后一篇文章，我将使用google的开源机器学习框架tensorflow来构建一个神经网络回归器。关于tensorflow的介绍、安装、入门，请自己google，这里就不做讲述。</p>
+<p>  这篇文章我主要讲解一下几点：</p>
+<ul>
+<li>了解人工神经网络理论</li>
+<li>tensorflow高级API:Estimators</li>
+<li>构建DNN模型预测天气</li>
+</ul>
+<h3>人工神经网络基础理论</h3>
+<p>  上一篇文章主要讲解了如何构建线性回归模型(这是最基础的机器学习算法)来预测内布拉斯加州林肯市每天的平均气温。线性回归模型非常有效，并且可以被用于数值化(比如分类)、预测(比如预测天气)。线性回归算法也比较与局限性，它要求数据之间具有线性关系。
+  针对于非线性关系的场景，数据挖掘和机器学习有数不清的算法来处理。近些年最火的要数神经网络算法了，它可以处理机器学习领域的好多问题。神经网络算法具备线性和非线性学习算法的能力。
+  神经网络受到大脑中的生物神经元的启发，它们在复杂的交互网络中工作，根据已经收集的信息的历史来传输，收集和学习信息。我们感兴趣的计算神经网络类似于大脑的神经元，因为它们是接收输入信号（数字量）的神经元（节点）的集合，处理输入并将处理后的信号发送给其他下游代理 网络。 信号作为通过神经网络的数字量的处理是一个非常强大的特征，不限于线性关系。
+  在这个系列中，我一直关注一种称为监督学习的特定类型的机器学习，也就说说训练的数据结果是已知的，根据历史已知的输入和输出，预测未来的输入对应的输出。 此外，预测的类型是数值的真实值，这意味着我们使用的是回归预测算法。
+  从图形上看，类似于本文中描述的神经网络如图:
+<img alt="" src="./使用机器学习预测天气(第三部分神经网络)_files/bee7b10a09ce9b895954dc57b1d5833e">
+上面描述的神经网络在最左边包含一个输入层，即图中的x1和x2，这两个特征是神经网络输入值。这两个特征被输入到神经网络中，通过被称为隐藏层的两层神经元进行处理和传输。这个描述显示了两个隐藏层，每层包含三个神经元（节点）。 该信号然后离开神经网络，并作为单个数值预测值汇总在输出层。
+  让我花一点时间来解释箭头背后的含义，箭头表示数据在层间从一个节点到另一个节点的传输处理。 每个箭头代表一个数值的数学变换，从箭头的底部开始，然后乘以特定于该路径特定的权重。 一个图层中的每个节点将以这种方式得到一个值。 然后汇总所有在节点收敛的值。 这个就是我之前提到的神经网络的线性操作。
+<img alt="" src="./使用机器学习预测天气(第三部分神经网络)_files/c7530f87b79f58821d1149fa6c58cc42">
+  在每个节点上进行求和之后，将一个特殊的非线性函数应用到总和上，这在上面的图像中被描述为Fn（...）。 这种将非线性特征引入神经网络的特殊功能称为激活功能。 激活函数所带来的这种非线性特性赋予了多层神经网络以其功能。 如果不是将非线性加入到过程中，则所有层都将有效地代数地组合成一个常数运算，其中包括将输入乘以某个平坦系数值（即线性模型）。
+好吧，这一切都很好，但是这怎么转化为学习算法呢？ 那么最直接的答案就是评估正在进行的预测，即模型“y”的输出，到实际预期值（目标），并对权重进行一系列调整，以改善整体 预测准确性。
+  在回归机器学习算法的世界中，通过使用成本（又名“损失”或“客观”）函数（即平方误差之和（SSE））评估准确性。 请注意，我把这个声明推广到整个机器学习的连续体，而不仅仅是神经网络。 在前面的文章中，普通最小二乘算法完成了这一工作，它发现了使误差平方和（即最小二乘）最小化的系数组合。
+  我们的神经网络回归器会做同样的事情。 它将迭代训练数据提取特征值，计算成本函数（使用SSE），并以最小化成本函数的方式调整权重。 通过算法迭代推送特征的过程和评估如何根据成本函数来调整权重。
+  模型优化算法在构建鲁棒神经网络中非常重要。 例如通过网络体系结构（即宽度和深度）馈送，然后根据成本函数进行评估，调整权重。 当优化器函数确定权重调整不会导致成本函数计算代价的变化，该模型被认为是“学习”。</p>
+<h3>TensorFlow Estimator API</h3>
+<p>  tensorflow由好几个部分组成，其中最常用的是Core API,它为用户提供了一套低级别的API来定义和训练使用符号操作的任何机器学习算法。这也是TensorFlow的核心功能，虽然Core API能应对大多数的应用场景，但我更关注Estimator API。
+  TensorFlow团队开发了Estimator API，使日常开发人员可以更方便地使用该库。这个API提供了训练模型、评估模型、以及和Sci-Kit库相似的对未知数据的预测接口，这是通过实现各种算法的通用接口来实现的。另外，构建在高级API中的是机器学习最佳实践，抽象和可伸缩性的负载。
+  所有这些机器学习的优点使得基础Estimator类中实现的一套工具以及多个预先封装的模型类型，降低了使用TensorFlow的入门门槛，因此可以应用于日常问题。通过抽象出诸如编写训练循环或处理会话之类的问题，开发人员能够专注于更重要的事情，如快速尝试多个模型和模型架构，以找到最适合他们需要的模型。
+  在这篇文章中，我将介绍如何使用非常强大的深度神经网络估计器之一DNN Regressor。</p>
+<h3>建立一个DNNRegressor来预测天气</h3>
+<p>  我们先导入一些我们需要用到的库。</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>  
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>  
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="kn">as</span> <span class="nn">tf</span>  
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> 
+<span class="n">explained_variance_score</span><span class="p">,</span> \  
+    <span class="n">mean_absolute_error</span><span class="p">,</span> \
+    <span class="n">median_absolute_error</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>  
+</pre></div>
+
+
+<p>我们来处理一下数据，所有的数据我都放在了Github上，大家可以去查阅clone。</p>
+<div class="highlight"><pre><span class="c"># read in the csv data into a pandas data frame and set the date as the index</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'end-part2_df.csv'</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">'date'</span><span class="p">)</span>
+
+<span class="c"># execute the describe() function and transpose the output so that it doesn't overflow the width of the screen</span>
+<span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>  
+</pre></div>
+
+
+<p><img alt="" src="./使用机器学习预测天气(第三部分神经网络)_files/9e4cee2484350996f458fd1a1111aad9">
+<img alt="" src="./使用机器学习预测天气(第三部分神经网络)_files/d1e3ba193f964f2abbe7e89d7e9be018"></p>
+<div class="highlight"><pre><span class="c"># execute the info() function</span>
+<span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+<span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="s">'&gt;  </span>
+<span class="n">Index</span><span class="p">:</span> <span class="mi">997</span> <span class="n">entries</span><span class="p">,</span> <span class="mi">2015</span><span class="o">-</span><span class="mo">01</span><span class="o">-</span><span class="mo">04</span> <span class="n">to</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">09</span><span class="o">-</span><span class="mi">27</span>  
+<span class="n">Data</span> <span class="n">columns</span> <span class="p">(</span><span class="n">total</span> <span class="mi">39</span> <span class="n">columns</span><span class="p">):</span>  
+<span class="n">meantempm</span>          <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">int64</span>  
+<span class="n">maxtempm</span>           <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">int64</span>  
+<span class="n">mintempm</span>           <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">int64</span>  
+<span class="n">meantempm_1</span>        <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">meantempm_2</span>        <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">meantempm_3</span>        <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">meandewptm_1</span>       <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">meandewptm_2</span>       <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">meandewptm_3</span>       <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">meanpressurem_1</span>    <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">meanpressurem_2</span>    <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">meanpressurem_3</span>    <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxhumidity_1</span>      <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxhumidity_2</span>      <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxhumidity_3</span>      <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">minhumidity_1</span>      <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">minhumidity_2</span>      <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">minhumidity_3</span>      <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxtempm_1</span>         <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxtempm_2</span>         <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxtempm_3</span>         <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">mintempm_1</span>         <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">mintempm_2</span>         <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">mintempm_3</span>         <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxdewptm_1</span>        <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxdewptm_2</span>        <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxdewptm_3</span>        <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">mindewptm_1</span>        <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">mindewptm_2</span>        <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">mindewptm_3</span>        <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxpressurem_1</span>     <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxpressurem_2</span>     <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">maxpressurem_3</span>     <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">minpressurem_1</span>     <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">minpressurem_2</span>     <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">minpressurem_3</span>     <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">precipm_1</span>          <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">precipm_2</span>          <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">precipm_3</span>          <span class="mi">997</span> <span class="n">non</span><span class="o">-</span><span class="n">null</span> <span class="n">float64</span>  
+<span class="n">dtypes</span><span class="p">:</span> <span class="n">float64</span><span class="p">(</span><span class="mi">36</span><span class="p">),</span> <span class="n">int64</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  
+<span class="n">memory</span> <span class="n">usage</span><span class="p">:</span> <span class="mf">311.6</span><span class="o">+</span> <span class="n">KB</span>  
+</pre></div>
+
+
+<p>  请注意，我们刚刚记录下了1000个气象数据记录，并且所有的特征都是数字性质的。 另外，由于我们在第一篇文章中的努力工作，所有记录都是完整的，因为它们不缺少任何值（没有非空值）。
+  现在我将删除“mintempm”和“maxtempm”这两列，因为它们对帮助我们预测平均温度毫无意义。 我们正在试图预测未来，所以我们显然不能掌握有关未来的数据。 我还将从目标（y）中分离出特征（X）。</p>
+<div class="highlight"><pre><span class="c"># First drop the maxtempm and mintempm from the dataframe</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s">'mintempm'</span><span class="p">,</span> <span class="s">'maxtempm'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c"># X will be a pandas dataframe of all columns except meantempm</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s">'meantempm'</span><span class="p">]]</span>
+
+<span class="c"># y will be a pandas series of the meantempm</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'meantempm'</span><span class="p">]</span>  
+</pre></div>
+
+
+<p>  和所有监督机器学习应用程序一样，我将把我的数据集分成训练集和测试集。 但是，为了更好地解释训练这个神经网络的迭代过程，我将使用一个额外的数据集，我将其称为“验证集合”。 对于训练集，我将利用80％的数据，对于测试和验证集，它们将分别为剩余数据的10％。为了分解这些数据，我将再次使用Scikit Learn 库的train_test_split（）函数。</p>
+<div class="highlight"><pre><span class="c"># split data into training set and a temporary set using sklearn.model_selection.traing_test_split</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_tmp</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_tmp</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">23</span><span class="p">)</span>  
+<span class="c"># take the remaining 20% of data in X_tmp, y_tmp and split them evenly</span>
+<span class="n">X_test</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_tmp</span><span class="p">,</span> <span class="n">y_tmp</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">23</span><span class="p">)</span>
+
+<span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_val</span><span class="o">.</span><span class="n">shape</span>  
+<span class="k">print</span><span class="p">(</span><span class="s">"Training instances   {}, Training features   {}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>  
+<span class="k">print</span><span class="p">(</span><span class="s">"Validation instances {}, Validation features {}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_val</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X_val</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>  
+<span class="k">print</span><span class="p">(</span><span class="s">"Testing instances    {}, Testing features    {}"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>  
+<span class="n">Training</span> <span class="n">instances</span>   <span class="mi">797</span><span class="p">,</span> <span class="n">Training</span> <span class="n">features</span>   <span class="mi">36</span>  
+<span class="n">Validation</span> <span class="n">instances</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Validation</span> <span class="n">features</span> <span class="mi">36</span>  
+<span class="n">Testing</span> <span class="n">instances</span>    <span class="mi">100</span><span class="p">,</span> <span class="n">Testing</span> <span class="n">features</span>    <span class="mi">36</span>  
+</pre></div>
+
+
+<p>构建神经网络模型时要采取的第一步是实例化tf.estimator.DNNRegressor（）类。类的构造函数有多个参数，但我将重点关注以下参数：</p>
+<ul>
+<li>feature_columns：一种类似列表的结构，包含要输入到模型中的要素的名称和数据类型的定义</li>
+<li>hidden_​​units：一个类似列表的结构，包含神经网络数量宽度和深度的定义</li>
+<li>optimizer：tf.Optimizer子类的一个实例，在训练期间优化模型的权重;它的默认值是AdaGrad优化器。</li>
+<li>activation_fn：激活功能，用于在每一层向网络引入非线性;默认是ReLU</li>
+<li>model_dir：要创建的目录，其中包含模型的元数据和其他检查点保存
+我将首先定义一个数字特征列的列表。要做到这一点，我使用tf.feature_column.numeric_column（）函数返回一个FeatureColumn实例。</li>
+</ul>
+<div class="highlight"><pre><span class="n">feature_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">feature_column</span><span class="o">.</span><span class="n">numeric_column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span> 
+</pre></div>
+
+
+<p>  使用定义的特性列，我现在可以实例化DNNRegressor类并将其存储在回归变量中。 我指定我想要一个有两层深度的神经网络，其中两层的宽度都是50个节点。 我还指出，我希望我的模型数据存储在一个名为tf_wx_model的目录中。</p>
+<div class="highlight"><pre><span class="n">regressor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">DNNRegressor</span><span class="p">(</span><span class="n">feature_columns</span><span class="o">=</span><span class="n">feature_cols</span><span class="p">,</span>  
+                                      <span class="n">hidden_units</span><span class="o">=</span><span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span>
+                                      <span class="n">model_dir</span><span class="o">=</span><span class="s">'tf_wx_model'</span><span class="p">)</span>
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Using</span> <span class="n">default</span> <span class="n">config</span><span class="o">.</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Using</span> <span class="n">config</span><span class="p">:</span> <span class="p">{</span><span class="s">'_tf_random_seed'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'_save_checkpoints_steps'</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s">'_save_checkpoints_secs'</span><span class="p">:</span> <span class="mi">600</span><span class="p">,</span> <span class="s">'_model_dir'</span><span class="p">:</span> <span class="s">'tf_wx_model'</span><span class="p">,</span> <span class="s">'_log_step_count_steps'</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s">'_keep_checkpoint_every_n_hours'</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span> <span class="s">'_save_summary_steps'</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s">'_keep_checkpoint_max'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s">'_session_config'</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>  
+</pre></div>
+
+
+<p>接下来我想要做的是定义一个可重用的函数，这个函数通常被称为“输入函数”，我将调用wx_input_fn（）。 这个函数将被用来在训练和测试阶段将数据输入到我的神经网络中。有许多不同的方法来建立输入函数，但我将描述如何定义和使用一个基于tf.estimator.inputs.pandas_input_fn（），因为我的数据是在一个pandas数据结构。</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">wx_input_fn</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">400</span><span class="p">):</span>  
+    <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">estimator</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">pandas_input_fn</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+                                               <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                                               <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
+                                               <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span>
+                                               <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+</pre></div>
+
+
+<p>  请注意，这个wx_input_fn（）函数接受一个必选参数和四个可选参数，然后将这些参数交给TensorFlow输入函数，专门用于返回的pandas数据。 这是TensorFlow API一个非常强大的功能。函数的参数定义如下：</p>
+<ul>
+<li>X：输入要输入到三种DNNRegressor接口方法中的一种（训练，评估和预测）</li>
+<li>y：X的目标值，这是可选的，不会被提供给预测调用</li>
+<li>num_epochs：可选参数。 当算法在整个数据集上执行一次时，就会出现一个新纪元。</li>
+<li>shuffle：可选参数，指定每次执行算法时是否随机选择数据集的批处理（子集）</li>
+<li>batch_size：每次执行算法时要包含的样本数</li>
+</ul>
+<p>  通过定义我们的输入函数，我们现在可以训练我们基于训练数据集上的神经网络。 对于熟悉TensorFlow高级API的读者，您可能会注意到我对自己的模型的培训方式有点不合常规。至少从TensorFlow网站上的当前教程和网络上的其他教程的角度来看。通常情况下，您将看到如下所示的内容。</p>
+<div class="highlight"><pre><span class="n">regressor</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">input_fn</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">steps</span><span class="o">=</span><span class="n">some_large_number</span><span class="p">)</span>
+
+<span class="o">.....</span>
+<span class="n">lots</span> <span class="n">of</span> <span class="n">log</span> <span class="n">info</span>  
+<span class="o">....</span>
+</pre></div>
+
+
+<p>然后，作者将直接展示evaluate（）函数，并且几乎没有提示它在做什么或为什么存在这一行代码。</p>
+<div class="highlight"><pre><span class="n">regressor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">input_fn</span><span class="p">(</span><span class="n">eval_data</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span> <span class="n">steps</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="o">.....</span>
+<span class="n">less</span> <span class="n">log</span> <span class="n">info</span>  
+<span class="o">....</span>
+</pre></div>
+
+
+<p>在此之后，假设所有的训练模型都是完美的，他们会直接跳到执行predict()函数。</p>
+<div class="highlight"><pre><span class="n">predictions</span> <span class="o">=</span> <span class="n">regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">input_fn</span><span class="p">(</span><span class="n">pred_data</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span> <span class="n">steps</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  
+</pre></div>
+
+
+<p>  我希望能够提供一个合理的解释，说明如何训练和评估这个神经网络，以便将这个模型拟合或过度拟合到训练数据上的风险降到最低。因此，我们不再拖延，让我定义一个简单的训练循环，对训练数据进行训练，定期对评估数据进行评估。</p>
+<div class="highlight"><pre><span class="n">evaluations</span> <span class="o">=</span> <span class="p">[]</span>  
+<span class="n">STEPS</span> <span class="o">=</span> <span class="mi">400</span>  
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>  
+    <span class="n">regressor</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">wx_input_fn</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y_train</span><span class="p">),</span> <span class="n">steps</span><span class="o">=</span><span class="n">STEPS</span><span class="p">)</span>
+    <span class="n">evaluations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">regressor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">wx_input_fn</span><span class="p">(</span><span class="n">X_val</span><span class="p">,</span>
+                                                               <span class="n">y_val</span><span class="p">,</span>
+                                                               <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                               <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">)))</span>
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Create</span> <span class="n">CheckpointSaverHook</span><span class="o">.</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Saving</span> <span class="n">checkpoints</span> <span class="k">for</span> <span class="mi">1</span> <span class="n">into</span> <span class="n">tf_wx_model</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">ckpt</span><span class="o">.</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">step</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="mf">1.11335e+07</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">global_step</span><span class="o">/</span><span class="n">sec</span><span class="p">:</span> <span class="mf">75.7886</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">step</span> <span class="o">=</span> <span class="mi">101</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="mf">36981.3</span> <span class="p">(</span><span class="mf">1.321</span> <span class="n">sec</span><span class="p">)</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">global_step</span><span class="o">/</span><span class="n">sec</span><span class="p">:</span> <span class="mf">85.0322</span>  
+<span class="o">...</span> <span class="n">A</span> <span class="n">WHOLE</span> <span class="n">LOT</span> <span class="n">OF</span> <span class="n">LOG</span> <span class="n">OUTPUT</span> <span class="o">...</span>
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">step</span> <span class="o">=</span> <span class="mi">39901</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="mf">5205.02</span> <span class="p">(</span><span class="mf">1.233</span> <span class="n">sec</span><span class="p">)</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Saving</span> <span class="n">checkpoints</span> <span class="k">for</span> <span class="mi">40000</span> <span class="n">into</span> <span class="n">tf_wx_model</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">ckpt</span><span class="o">.</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Loss</span> <span class="k">for</span> <span class="n">final</span> <span class="n">step</span><span class="p">:</span> <span class="mf">4557.79</span><span class="o">.</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Starting</span> <span class="n">evaluation</span> <span class="n">at</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">13</span><span class="p">:</span><span class="mi">48</span><span class="p">:</span><span class="mi">43</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Restoring</span> <span class="n">parameters</span> <span class="kn">from</span> <span class="nn">tf_wx_model</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">ckpt</span><span class="o">-</span><span class="mi">40000</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Evaluation</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mi">1</span><span class="p">]</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Finished</span> <span class="n">evaluation</span> <span class="n">at</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">13</span><span class="p">:</span><span class="mi">48</span><span class="p">:</span><span class="mi">43</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Saving</span> <span class="nb">dict</span> <span class="k">for</span> <span class="k">global</span> <span class="n">step</span> <span class="mi">40000</span><span class="p">:</span> <span class="n">average_loss</span> <span class="o">=</span> <span class="mf">10.2416</span><span class="p">,</span> <span class="n">global_step</span> <span class="o">=</span> <span class="mi">40000</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="mf">1024.16</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Starting</span> <span class="n">evaluation</span> <span class="n">at</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">13</span><span class="p">:</span><span class="mi">48</span><span class="p">:</span><span class="mi">43</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Restoring</span> <span class="n">parameters</span> <span class="kn">from</span> <span class="nn">tf_wx_model</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">ckpt</span><span class="o">-</span><span class="mi">40000</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Finished</span> <span class="n">evaluation</span> <span class="n">at</span> <span class="mi">2017</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">13</span><span class="p">:</span><span class="mi">48</span><span class="p">:</span><span class="mi">43</span>  
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Saving</span> <span class="nb">dict</span> <span class="k">for</span> <span class="k">global</span> <span class="n">step</span> <span class="mi">40000</span><span class="p">:</span> <span class="n">average_loss</span> <span class="o">=</span> <span class="mf">10.2416</span><span class="p">,</span> <span class="n">global_step</span> <span class="o">=</span> <span class="mi">40000</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="mf">1024.16</span>  
+</pre></div>
+
+
+<p>  上面的循环迭代了100次。 在循环体中，我调用了回归器对象的train（）方法，并将其传递给了我的可重用的wx_input_fn（），后者又通过了我的训练功能集和目标。 我有意地将默认参数num_epochs等于None，基本上这样说：“我不在乎你通过训练集多少次，只是继续训练算法对每个默认batch_size 400”（大约一半的训练 组）。 我还将shuffle参数设置为默认值True，以便在训练时随机选择数据以避免数据中的任何顺序关系。 train（）方法的最后一个参数是我设置为400的步骤，这意味着训练集每个循环将被批处理400次。
+  这给了我一个很好的时间以更具体的数字来解释一个epoch的意义。 回想一下，当一个训练集的所有记录都通过神经网络训练一次时，就会出现一个epoch。 所以，如果我们的训练集中有大约800（准确的说是797）个记录，并且每个批次选择400个，那么每两个批次我们就完成了一个时间。 因此，如果我们遍历整个训练集100个迭代400个步骤，每个批次大小为400（每个批次的一个半个时间），我们得到：</p>
+<div class="highlight"><pre><span class="p">(</span><span class="mi">100</span> <span class="n">x</span> <span class="mi">400</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span><span class="mo">000</span> <span class="n">epochs</span>
+</pre></div>
+
+
+<p>  现在你可能想知道为什么我为循环的每次迭代执行和evaluate()方法，并在列表中捕获它的输出。 首先让我解释一下每次train()方法被触发时会发生什么。它随机选择一批训练记录，并通过网络推送，直到做出预测，并为每条记录计算损失函数。 然后根据计算出的损失根据优化器的逻辑调整权重，这对于减少下一次迭代的整体损失的方向做了很好的调整。 一般而言，只要学习速率足够小，这些损失值随着时间的推移而逐渐下降。
+  然而，经过一定数量的这些学习迭代之后，权重开始不仅受到数据整体趋势的影响，而且还受到非实际的噪声在所有实际数据中的继承。 在这一点上，网络受到训练数据特性的过度影响，并且变得无法推广关于总体数据的预测。这与我之前提到的高级TensorFlow API许多其他教程不足之处有关。 在训练期间周期性地打破这一点非常重要，并评估模型如何推广到评估或验证数据集。 通过查看第一个循环迭代的评估输出，让我们花些时间看看evaluate()函数返回的结果。</p>
+<div class="highlight"><pre><span class="n">evaluations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  
+<span class="p">{</span><span class="s">'average_loss'</span><span class="p">:</span> <span class="mf">31.116383</span><span class="p">,</span> <span class="s">'global_step'</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s">'loss'</span><span class="p">:</span> <span class="mf">3111.6382</span><span class="p">}</span>
+</pre></div>
+
+
+<p>正如你所看到的，它输出的是平均损失（均方误差）和训练中的步骤的总损失（平方误差和），这一步是第400步。 在训练有素的网络中，你通常会看到一种趋势，即训练和评估损失或多或少地平行下降。 然而，在某个时间点的过度配置模型中，实际上在过拟合开始出现的地方，验证训练集将不再看到其evaluate()方法的输出降低。 这是你想停止进一步训练模型的地方，最好是在变化发生之前。
+  现在我们对每个迭代都有一个评估集合，让我们将它们作为训练步骤的函数来绘制，以确保我们没有过度训练我们的模型。 为此，我将使用matplotlib的pyplot模块中的一个简单的散点图。</p>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>  
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="c"># manually set the parameters of the figure to and appropriate size</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s">'figure.figsize'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+
+<span class="n">loss_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">ev</span><span class="p">[</span><span class="s">'loss'</span><span class="p">]</span> <span class="k">for</span> <span class="n">ev</span> <span class="ow">in</span> <span class="n">evaluations</span><span class="p">]</span>  
+<span class="n">training_steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">ev</span><span class="p">[</span><span class="s">'global_step'</span><span class="p">]</span> <span class="k">for</span> <span class="n">ev</span> <span class="ow">in</span> <span class="n">evaluations</span><span class="p">]</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">training_steps</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">loss_values</span><span class="p">)</span>  
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Training steps (Epochs = steps / 2)'</span><span class="p">)</span>  
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Loss (SSE)'</span><span class="p">)</span>  
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>  
+</pre></div>
+
+
+<p><img alt="" src="./使用机器学习预测天气(第三部分神经网络)_files/e99e012a51a252b5375666d776bc7119"></p>
+<p>  从上面的图表看来，在所有这些迭代之后，我并没有过度配置模型，因为评估损失从来没有呈现出朝着增加价值的方向的显着变化。现在，我可以安全地继续根据我的剩余测试数据集进行预测，并评估模型如何预测平均天气温度。
+  与我已经演示的其他两种回归方法类似，predict()方法需要input_fn，我将使用可重用的wx_input_fn()传递input_fn，将测试数据集交给它，将num_epochs指定为None，shuffle为False，因此它将依次送入所有的数据进行测试。
+  接下来，我做一些从predict()方法返回的dicts迭代的格式，以便我有一个numpy的预测数组。然后，我使用sklearn方法explain_variance_score()，mean_absolute_error()和median_absolute_error()来预测数组，以测量预测与已知目标y_test的关系。</p>
+<div class="highlight"><pre><span class="n">pred</span> <span class="o">=</span> <span class="n">regressor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_fn</span><span class="o">=</span><span class="n">wx_input_fn</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span>  
+                                              <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                              <span class="n">shuffle</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="s">'predictions'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pred</span><span class="p">])</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">"The Explained Variance: </span><span class="si">%.2f</span><span class="s">"</span> <span class="o">%</span> <span class="n">explained_variance_score</span><span class="p">(</span>  
+                                            <span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">))</span>  
+<span class="k">print</span><span class="p">(</span><span class="s">"The Mean Absolute Error: </span><span class="si">%.2f</span><span class="s"> degrees Celcius"</span> <span class="o">%</span> <span class="n">mean_absolute_error</span><span class="p">(</span>  
+                                            <span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">))</span>  
+<span class="k">print</span><span class="p">(</span><span class="s">"The Median Absolute Error: </span><span class="si">%.2f</span><span class="s"> degrees Celcius"</span> <span class="o">%</span> <span class="n">median_absolute_error</span><span class="p">(</span>  
+                                            <span class="n">y_test</span><span class="p">,</span> <span class="n">predictions</span><span class="p">))</span>
+<span class="n">INFO</span><span class="p">:</span><span class="n">tensorflow</span><span class="p">:</span><span class="n">Restoring</span> <span class="n">parameters</span> <span class="kn">from</span> <span class="nn">tf_wx_model</span><span class="o">/</span><span class="n">model</span><span class="o">.</span><span class="n">ckpt</span><span class="o">-</span><span class="mi">40000</span>  
+<span class="n">The</span> <span class="n">Explained</span> <span class="n">Variance</span><span class="p">:</span> <span class="mf">0.88</span>  
+<span class="n">The</span> <span class="n">Mean</span> <span class="n">Absolute</span> <span class="n">Error</span><span class="p">:</span> <span class="mf">3.11</span> <span class="n">degrees</span> <span class="n">Celcius</span>  
+<span class="n">The</span> <span class="n">Median</span> <span class="n">Absolute</span> <span class="n">Error</span><span class="p">:</span> <span class="mf">2.51</span> <span class="n">degrees</span> <span class="n">Celcius</span>  
+</pre></div>
+
+
+<p>我已经使用了与上一篇文章有关的线性回归技术相同的指标，以便我们不仅可以评估这个模型，还可以对它们进行比较。 正如你所看到的，这两个模型的表现相当类似，更简单的线性回归模型略好一些。然而，你可以通过修改学习速率，宽度和深度等参数来优化机器学习模型。</p>
+<h3>总结</h3>
+<p>  本文演示了如何使用TensorFlow高级API Estimator子类DNNRegressor。并且，我也描述了神经网络理论，他们是如何被训练的，以及在过程中认识到过度拟合模型的危险性的重要性。
+  为了演示这个建立神经网络的过程，我建立了一个模型，能够根据本系列第一篇文章收集的数字特征预测第二天的平均温度。写这些文章的目的不是为了建立一个非常好的模型预测天气，我的目标是：</p>
+<ul>
+<li>演示从数据收集，数据处理，探索性数据分析，模型选择，模型构建和模型评估中进行分析（机器学习，数据科学，无论...）项目的一般过程。</li>
+<li>演示如何使用两个流行的Python库StatsModels和Scikit Learn来选择不违反线性回归技术关键假设的有意义的功能。</li>
+<li>演示如何使用高级别的TensorFlow API，并直观地了解所有这些抽象层下正在发生的事情。</li>
+<li>讨论与过度拟合模型相关的问题。</li>
+<li>解释试验多个模型类型以最好地解决问题。</li>
+</ul>
+<h3>相关文章</h3>
+<p><a href="http://www.bugcode.cn/mlweatherpart02.html">使用机器学习预测天气第二部分</a>
+<a href="http://www.bugcode.cn/mlweatherpart01.html">使用机器学习预测天气第一部分</a>
+<a href="http://stackabuse.com/using-machine-learning-to-predict-the-weather-part-3/">英文原文</a></p>
+            </div><!-- /.entry-content -->
+            <div class="comments">
+              <h3>Comments</h3>
+              <div id="disqus_thread"><iframe id="dsq-app4055" name="dsq-app4055" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./使用机器学习预测天气(第三部分神经网络)_files/saved_resource(1).html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 387px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+              <script type="text/javascript">
+                var disqus_identifier = "mlweatherpart03.html";
+                (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = 'http://bugcode.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                })();
+              </script>
+            </div>
+
+
+        </div><!-- /.eleven.columns -->
+
+<div class="three columns">
+
+<h4>Pages</h4>
+
+ <ul>
+      <li><a href="http://www.bugcode.cn/pages/%E4%BA%86%E8%A7%A3%E6%88%91.html">关于我</a></li>
+  </ul>
+
+<h4>Categories</h4>
+<ul class="blank">
+		<li><a href="http://www.bugcode.cn/category/git.html">git</a></li>
+		<li><a href="http://www.bugcode.cn/category/ji-qi-xue-xi.html">机器学习</a></li>
+		<li><a href="http://www.bugcode.cn/category/mi-ma-jia-mi.html">密码加密</a></li>
+		<li><a href="http://www.bugcode.cn/category/mysql.html">mysql</a></li>
+		<li><a href="http://www.bugcode.cn/category/onepassword.html">onepassword</a></li>
+		<li><a href="http://www.bugcode.cn/category/pythonku.html">python库</a></li>
+		<li><a href="http://www.bugcode.cn/category/ren-lian-shi-bie.html">人脸识别</a></li>
+		<li><a href="http://www.bugcode.cn/category/wei-xie-qing-bao.html">威胁情报</a></li>
+		<li><a href="http://www.bugcode.cn/category/yun-wei-gong-ju.html">运维工具</a></li>
+		<li><a href="http://www.bugcode.cn/category/za-xue.html">杂学</a></li>
+</ul>
+
+
+<h4>Tags</h4>
+	<ul class="blank">
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/shi-yong.html">使用</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/wen-ti.html">问题</a></li>
+	    <li class="tag-2"><a href="http://www.bugcode.cn/tag/ji-qi-xue-xi.html">机器学习</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/shou-fei.html">收费</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/selenium.html">selenium</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/opentaxii.html">opentaxii</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/django.html">Django</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/suo-yin.html">索引</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/user-agent.html">user-agent</a></li>
+	    <li class="tag-3"><a href="http://www.bugcode.cn/tag/json.html">json</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/jia-mi-liu-cheng.html">加密流程</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/vim.html">vim</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/te-xing.html">特性</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/wei-xie-qing-bao-ding-yue.html">威胁情报订阅</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/xin-wen.html">新闻</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/os.html">os</a></li>
+	    <li class="tag-2"><a href="http://www.bugcode.cn/tag/mysql.html">mysql</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/equal.html">equal</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/jia-mi-fang-fa.html">加密方法</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/sync.html">sync</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/android.html">android</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/pitfalls.html">Pitfalls</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/api.html">api</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/system.html">system</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/ji-qiao.html">技巧</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/mian-shi.html">面试</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/hao-yang-mao.html">薅羊毛</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/ren-lian-shi-bie.html">人脸识别</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/tui-jian.html">推荐</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/python3.html">Python3</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/stix.html">stix</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/shi-bai.html">失败</a></li>
+	    <li class="tag-2"><a href="http://www.bugcode.cn/tag/jiao-cheng.html">教程</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/keng.html">坑</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/yi-chang.html">异常</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/chang-yong-shell.html">常用shell</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/jsonda-wen-jian.html">json大文件</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/qian-yi.html">迁移</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/cuo-wu-ma.html">错误码</a></li>
+	    <li class="tag-3"><a href="http://www.bugcode.cn/tag/dict.html">dict</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/git.html">git</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/mi-ma.html">密码</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/tensorflow.html">tensorflow</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/ios.html">ios</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/ce-shi.html">测试</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/seetaface.html">seetaface</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/yan-zheng-ma.html">验证码</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/cjson.html">cjson</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/include.html">include</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/typeerror.html">TypeError</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/ujson.html">ujson</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/time.html">Time</a></li>
+	    <li class="tag-3"><a href="http://www.bugcode.cn/tag/onepassword.html">onepassword</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/cnn.html">cnn</a></li>
+	    <li class="tag-1"><a href="http://www.bugcode.cn/tag/python.html">python</a></li>
+	    <li class="tag-3"><a href="http://www.bugcode.cn/tag/jia-mi.html">加密</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/ru-men.html">入门</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/webdriver.html">webdriver</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/list.html">list</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/tou-wen-jian.html">头文件</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/webpy.html">webpy</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/captcha.html">captcha</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/bo-ke.html">博客</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/hash.html">hash</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/pythonshi-jian-ji-suan.html">python时间计算</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/setuppy.html">setup.py</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/tong-bu.html">同步</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/guo-wai.html">国外</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/po-jie.html">破解</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/ti-sheng.html">提升</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/he-bing.html">合并</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/bian-yi-fang-fa.html">编译方法</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/zi-dong-hua-ce-shi.html">自动化测试</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/cheng-shi-api.html">城市API</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/an-quan.html">安全</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/shi-jian-ku.html">时间库</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/yun-wei.html">运维</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/xiao-lu.html">效率</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/nginx.html">nginx</a></li>
+	    <li class="tag-4"><a href="http://www.bugcode.cn/tag/threading.html">threading</a></li>
+	    <li class="tag-3"><a href="http://www.bugcode.cn/tag/session.html">session</a></li>
+	    <li class="tag-2"><a href="http://www.bugcode.cn/tag/tian-qi-yu-ce.html">天气预测</a></li>
+</ul>
+
+
+<div class="google-auto-placed" style="text-align: center; width: 100%; height: auto; clear: none;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-1732630384020496" data-adsbygoogle-status="done" style="display: block; margin: 10px auto 4.368px; background-color: transparent; height: 440px;"><ins id="aswift_1_expand" style="display: inline-table; border: none; height: 440px; margin: 0px; padding: 0px; position: relative; visibility: visible; width: 220px; background-color: transparent;"><ins id="aswift_1_anchor" style="display: block; border: none; height: 440px; margin: 0px; padding: 0px; position: relative; visibility: visible; width: 220px; background-color: transparent; overflow: hidden;"><iframe width="220" height="440" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_1" name="aswift_1" style="left: 0px; position: absolute; top: 0px; width: 220px; height: 440px;" src="./使用机器学习预测天气(第三部分神经网络)_files/saved_resource(2).html"></iframe></ins></ins></ins></div><nav class="widget">
+  <h4>Social</h4>
+  <ul class="blank">
+    <li><a href="http://weibo.com/2001636957/profile">微博</a></li>
+    <li><a href="https://github.com/xiaochao">github</a></li>
+  </ul>
+</nav>
+
+</div> </div><!-- /.row -->
+
+
+</section>
+
+       </div><!-- /.row -->
+    </div><!-- /.container -->
+
+
+       <div class="container.nopad bg">
+
+    
+        <footer id="credits" class="row">
+          <div class="seven columns left-center">
+
+                   <address id="about" class="vcard body">
+                    Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
+                    which takes great advantage of <a href="http://python.org/">Python</a>.
+                    <br>
+                    Based on the <a target="_blank" href="http://gumbyframework.com/">Gumby Framework</a>
+                    </address>
+          </div>
+
+
+          <div class="seven columns">
+            <div class="row">
+              <ul class="socbtns">
+
+                <li><div class="btn primary"><a href="https://github.com/xiaochao" target="_blank">Github</a></div></li>
+
+                <li><div class="btn twitter"><a href="https://twitter.com/larkifly" target="_blank">Twitter</a></div></li>
+
+                <li><div class="btn facebook"><a href="https://www.facebook.com/shichao.chen.35" target="_blank">Facebook</a></div></li>
+
+                <li><div class="btn danger"><a href="https://plus.google.com/+%E9%99%88%E5%A3%AB%E8%B6%85" target="_blank">Google+</a></div></li>
+                <li><div class="btn primary"><a href="http://www.mobfan.cn/" target="_blank">知识空间</a></div></li>
+
+              </ul>
+            </div>
+          </div>
+        </footer>
+
+    </div>
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'bugcode';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+  <script src="./使用机器学习预测天气(第三部分神经网络)_files/jquery-1.9.1.min.js.download"></script><ins class="adsbygoogle adsbygoogle-noablate" data-adsbygoogle-status="done" style="display: none;"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:NaNpx;margin:0;padding:0;position:relative;visibility:visible;width:NaNpx;background-color:transparent;"><ins id="aswift_0_anchor" style="display:block;border:none;height:NaNpx;margin:0;padding:0;position:relative;visibility:visible;width:NaNpx;background-color:transparent;"><iframe frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;width:NaNpx;height:NaNpx;" src="./使用机器学习预测天气(第三部分神经网络)_files/saved_resource(3).html"></iframe></ins></ins></ins><iframe id="google_osd_static_frame_7601096893699" name="google_osd_static_frame" style="display: none; width: 0px; height: 0px;" src="./使用机器学习预测天气(第三部分神经网络)_files/saved_resource(4).html"></iframe><iframe style="display: none;" src="./使用机器学习预测天气(第三部分神经网络)_files/saved_resource(5).html"></iframe>
+  <script src="./使用机器学习预测天气(第三部分神经网络)_files/gumby.min.js.download"></script>
+  <script src="./使用机器学习预测天气(第三部分神经网络)_files/plugins.js.download"></script>
+  <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan id='cnzz_stat_icon_1257375768'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s11.cnzz.com/z_stat.php%3Fid%3D1257375768%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));
+  </script><span id="cnzz_stat_icon_1257375768"><a href="http://www.cnzz.com/stat/website.php?web_id=1257375768" target="_blank" title="站长统计"><img border="0" hspace="0" vspace="0" src="./使用机器学习预测天气(第三部分神经网络)_files/pic.gif"></a></span><script src="./使用机器学习预测天气(第三部分神经网络)_files/z_stat.php" type="text/javascript"></script><script src="./使用机器学习预测天气(第三部分神经网络)_files/core.php" charset="utf-8" type="text/javascript"></script>
+  <script async="" src="./使用机器学习预测天气(第三部分神经网络)_files/js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', 'UA-71880797-1');
+  </script>
+  
+
+    <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+</body></html>
